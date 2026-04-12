@@ -6,7 +6,7 @@ import {
   Scripts,
   ScrollRestoration,
 } from "react-router";
-
+import React from "react";
 import type { Route } from "./+types/root";
 import "./app.css";
 
@@ -42,7 +42,15 @@ export function Layout({ children }: { children: React.ReactNode }) {
 }
 
 export default function App() {
-  return <Outlet />;
+  const tsxElement = <h1 className="title">Hello</h1>;
+  const tsElement = React.createElement("h1", { className: "title" }, "Hello");
+  return (
+    <>
+      {tsxElement}
+      {tsElement}
+      <Outlet />;
+    </>
+  );
 }
 
 export function ErrorBoundary({ error }: Route.ErrorBoundaryProps) {
