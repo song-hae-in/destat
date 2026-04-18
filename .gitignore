@@ -1,0 +1,10 @@
+destat-ui/.DS_Store
+destat-ui/.env
+destat-ui/node_modules/
+
+# React Router
+destat-ui/.react-router/
+destat-ui/build/
+
+destat-ui/.env.local
+destat-ui/.env.local
