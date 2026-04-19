@@ -9,6 +9,8 @@ struct Answer {
     address respondent;
     uint8[] answers;
 }
+// 이벤트 Answer submit
+event AnswerSubmitted(address indexed respondent, uint8[] answers);
 // primitive : int, bol
 // memory, storage, calldata..
 contract Survey {
@@ -44,11 +46,14 @@ contract Survey {
             _answer.answers.length == questions.length,
             "err answers length"
         );
-        require(answers.length <= targetNumber, "This survey has been ended");
+        // 처음은 0이니깐 비교를 < 로 변경해야함
+        require(answers.length < targetNumber, "This survey has been ended");
         answers.push(
             Answer({respondent: _answer.respondent, answers: _answer.answers})
         );
         payable(msg.sender).transfer(rewardAmount);
+        //이벤트
+        emit AnswerSubmitted(msg.sender, _answer.answers);
     }
     function getAnswers() external view returns (Answer[] memory) {
         return answers;
