@@ -1,3 +1,23 @@
+# destat-ui 관련
+/destat-ui/.DS_Store
+/destat-ui/.env
+/destat-ui/.env.local
+/destat-ui/.env.development.local
+/destat-ui/.env.test.local
+/destat-ui/.env.production.local
+/destat-ui/node_modules/
+/destat-ui/.react-router/
+/destat-ui/build/
+/destat-ui/dist/
+
+# contract 관련
+/contract/artifacts/
+/contract/cache/
+/contract/typechain-types/
+/contract/node_modules/
+/contract/.env
+
+# 일반적인 항목
 .DS_Store
 .env
 /node_modules/
