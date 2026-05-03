@@ -5,6 +5,7 @@ import {
   NavigationMenuLink,
   NavigationMenuList,
   NavigationMenuTrigger,
+  navigationMenuTriggerStyle,
 } from "~/components/ui/navigation-menu";
 import { Link } from "react-router";
 import { Button } from "./ui/button";
@@ -21,7 +22,10 @@ export default function Navigation() {
           <NavigationMenuList>
             {/* Dashboard */}
             <NavigationMenuItem>
-              <NavigationMenuLink asChild>
+              <NavigationMenuLink
+                asChild
+                className={navigationMenuTriggerStyle()}
+              >
                 <Link to="/" className="px-4 py-2 text-sm font-medium">
                   Dashboard
                 </Link>

@@ -4,6 +4,7 @@ export default [
   index("features/dashboard/pages/dashboard.tsx"),
   route("/survey/all", "features/survey/pages/all-survey.tsx"),
   route("/surveys/create", "features/survey/pages/create-survey.tsx"),
+  route("/surveys/:surveyId", "features/survey/pages/survey.tsx"),
   route("/archive/finish", "features/archive/pages/finished-survey.tsx"),
   route("/profile/survey", "features/profile/pages/my-survey.tsx"),
   route("/profile/response", "features/profile/pages/my-response.tsx"),
