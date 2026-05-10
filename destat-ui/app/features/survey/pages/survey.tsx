@@ -10,6 +10,16 @@ import {
   CardFooter,
 } from "~/components/ui/card";
 import MessageBubble from "../components/message-bubble";
+import { Input } from "~/components/ui/input";
+import type { Route } from "./+types/survey";
+
+// router 가 알아서 formData 를 넘겨준다. action 함수는 formData 를 받아서 처리할 수 있다.
+export const action = async ({ request }: Route.ActionArgs) => {
+  const formData = await request.formData();
+  console.log(formData);
+  const answer = Object.fromEntries(formData);
+  console.log(Object.values(answer).map((str) => Number(str)));
+};
 
 interface Question {
   question: string;
@@ -80,44 +90,74 @@ export default function Survey() {
           </CardTitle>
           <CardDescription>This is a simple survey example</CardDescription>
         </CardHeader>
-        <CardContent className="overflow-y-auto h-[70vh] no-scrollbar">
-          <h1 className="font-semibold text-xl mb-6">Survey Progress</h1>
+        {false ? (
+          <CardContent className="overflow-y-auto h-[70vh] no-scrollbar">
+            <h1 className="font-semibold text-xl mb-6">Survey Progress</h1>
 
-          <div className="grid grid-cols-2 gap-8">
-            {questions.map((q, index) => (
-              <div key={index} className="flex flex-col gap-3">
-                <h1 className="font-medium">{q.question}</h1>
-                <div className="flex flex-col gap-2">
-                  {q.options.map((o, i) => (
-                    <div
-                      key={i}
-                      className="flex flex-row justify-center items-center relative"
-                    >
-                      <div className="absolute left-0 pl-3 text-xs font-semibold z-10 text-white drop-shadow-md">
-                        {o}
+            <div className="grid grid-cols-2 gap-8">
+              {questions.map((q, index) => (
+                <div key={index} className="flex flex-col gap-3">
+                  <h1 className="font-medium">{q.question}</h1>
+                  <div className="flex flex-col gap-2">
+                    {q.options.map((o, i) => (
+                      <div
+                        key={i}
+                        className="flex flex-row justify-center items-center relative"
+                      >
+                        <div className="absolute left-0 pl-3 text-xs font-semibold z-10 text-white drop-shadow-md">
+                          {o}
+                        </div>
+                        <div className="w-full bg-gray-200 h-7 rounded-full overflow-hidden">
+                          <div
+                            className="bg-primary h-full rounded-full transition-all"
+                            style={{ width: `${Math.random() * 100}%` }}
+                          ></div>
+                        </div>
                       </div>
-                      <div className="w-full bg-gray-200 h-7 rounded-full overflow-hidden">
-                        <div
-                          className="bg-primary h-full rounded-full transition-all"
-                          style={{ width: `${Math.random() * 100}%` }}
-                        ></div>
-                      </div>
-                    </div>
-                  ))}
+                    ))}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
-        </CardContent>
-        <CardFooter>
-          <p className="text-sm text-muted-foreground">Card Footer</p>
-        </CardFooter>
+              ))}
+            </div>
+          </CardContent>
+        ) : (
+          <CardContent className="flex flex-col gap-5 overflow-y-auto h-[70vh] no-scrollbar">
+            <Form method="post" className="grid grid-cols-2">
+              {questions.map((q, index) => (
+                <div className="flex flex-col gap-3">
+                  <span className="mt-5 mb-1">{q.question}</span>
+                  <div className="flex flex-col gap-2">
+                    {q.options.map((o, i) => (
+                      <label
+                        key={i}
+                        className="text-sm font-medium flex items-center gap-1"
+                      >
+                        <Input
+                          type="radio"
+                          name={index.toString()}
+                          value={i.toString()}
+                          className="hidden peer"
+                        />
+                        <span className="w-4 h-4 rounded-full border-2 peer-checked:bg-primary "></span>
+                        <span className="font-semibold">{o}</span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              ))}{" "}
+              <Button type="submit" className="w-full mt-5">
+                Submit
+              </Button>
+            </Form>
+          </CardContent>
+        )}
       </Card>
       <Card className="col-span-1">
         <CardHeader>
           <CardTitle>Chat View</CardTitle>
           <CardDescription>This is Sample survey</CardDescription>
         </CardHeader>
+
         <CardContent className="flex flex-col gap-5 overflow-y-auto h-[70vh] no-scrollbar">
           {Array.from({ length: 10 }).map((_, i) => (
             <MessageBubble key={i} sender={i % 2 === 0} />

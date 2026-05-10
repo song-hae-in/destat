@@ -45,7 +45,7 @@ export function Layout({ children }: { children: React.ReactNode }) {
 
 export default function App() {
   return (
-    <div className="flex justify-center items-center py-20 px-20 h-screen">
+    <div className="justify-center items-center py-20 px-20 h-screen">
       <Navigation />
       <Outlet />
     </div>
