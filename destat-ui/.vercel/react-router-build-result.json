@@ -1,0 +1,207 @@
+{
+  "buildManifest": {
+    "serverBundles": {
+      "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0": {
+        "id": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+        "file": "build/server/nodejs_eyJydW50aW1lIjoibm9kZWpzIn0/index.js",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    },
+    "routeIdToServerBundleId": {
+      "features/dashboard/pages/dashboard": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/survey/pages/all-survey": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/survey/pages/create-survey": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/survey/pages/survey": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/archive/pages/finished-survey": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/profile/pages/my-survey": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0",
+      "features/profile/pages/my-response": "nodejs_eyJydW50aW1lIjoibm9kZWpzIn0"
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "app/root.tsx",
+        "path": "",
+        "config": {}
+      },
+      "features/dashboard/pages/dashboard": {
+        "id": "features/dashboard/pages/dashboard",
+        "parentId": "root",
+        "file": "app/features/dashboard/pages/dashboard.tsx",
+        "index": true,
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/survey/pages/all-survey": {
+        "id": "features/survey/pages/all-survey",
+        "parentId": "root",
+        "file": "app/features/survey/pages/all-survey.tsx",
+        "path": "/survey/all",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/survey/pages/create-survey": {
+        "id": "features/survey/pages/create-survey",
+        "parentId": "root",
+        "file": "app/features/survey/pages/create-survey.tsx",
+        "path": "/surveys/create",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/survey/pages/survey": {
+        "id": "features/survey/pages/survey",
+        "parentId": "root",
+        "file": "app/features/survey/pages/survey.tsx",
+        "path": "/surveys/:surveyId",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/archive/pages/finished-survey": {
+        "id": "features/archive/pages/finished-survey",
+        "parentId": "root",
+        "file": "app/features/archive/pages/finished-survey.tsx",
+        "path": "/archive/finish",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/profile/pages/my-survey": {
+        "id": "features/profile/pages/my-survey",
+        "parentId": "root",
+        "file": "app/features/profile/pages/my-survey.tsx",
+        "path": "/profile/survey",
+        "config": {
+          "runtime": "nodejs"
+        }
+      },
+      "features/profile/pages/my-response": {
+        "id": "features/profile/pages/my-response",
+        "parentId": "root",
+        "file": "app/features/profile/pages/my-response.tsx",
+        "path": "/profile/response",
+        "config": {
+          "runtime": "nodejs"
+        }
+      }
+    }
+  },
+  "reactRouterConfig": {
+    "appDirectory": "C:/Block/dapp/destat/destat-ui/app",
+    "basename": "/",
+    "buildDirectory": "C:/Block/dapp/destat/destat-ui/build",
+    "future": {
+      "unstable_optimizeDeps": false,
+      "unstable_passThroughRequests": false,
+      "unstable_subResourceIntegrity": false,
+      "unstable_trailingSlashAwareDataRequests": false,
+      "unstable_previewServerPrerendering": false,
+      "v8_middleware": false,
+      "v8_splitRouteModules": false,
+      "v8_viteEnvironmentApi": false
+    },
+    "routes": {
+      "root": {
+        "id": "root",
+        "file": "root.tsx",
+        "path": ""
+      },
+      "features/dashboard/pages/dashboard": {
+        "id": "features/dashboard/pages/dashboard",
+        "parentId": "root",
+        "file": "features/dashboard/pages/dashboard.tsx",
+        "index": true
+      },
+      "features/survey/pages/all-survey": {
+        "id": "features/survey/pages/all-survey",
+        "parentId": "root",
+        "file": "features/survey/pages/all-survey.tsx",
+        "path": "/survey/all"
+      },
+      "features/survey/pages/create-survey": {
+        "id": "features/survey/pages/create-survey",
+        "parentId": "root",
+        "file": "features/survey/pages/create-survey.tsx",
+        "path": "/surveys/create"
+      },
+      "features/survey/pages/survey": {
+        "id": "features/survey/pages/survey",
+        "parentId": "root",
+        "file": "features/survey/pages/survey.tsx",
+        "path": "/surveys/:surveyId"
+      },
+      "features/archive/pages/finished-survey": {
+        "id": "features/archive/pages/finished-survey",
+        "parentId": "root",
+        "file": "features/archive/pages/finished-survey.tsx",
+        "path": "/archive/finish"
+      },
+      "features/profile/pages/my-survey": {
+        "id": "features/profile/pages/my-survey",
+        "parentId": "root",
+        "file": "features/profile/pages/my-survey.tsx",
+        "path": "/profile/survey"
+      },
+      "features/profile/pages/my-response": {
+        "id": "features/profile/pages/my-response",
+        "parentId": "root",
+        "file": "features/profile/pages/my-response.tsx",
+        "path": "/profile/response"
+      }
+    },
+    "routeDiscovery": {
+      "mode": "lazy",
+      "manifestPath": "/__manifest"
+    },
+    "serverBuildFile": "index.js",
+    "serverModuleFormat": "esm",
+    "ssr": true,
+    "allowedActionOrigins": false,
+    "unstable_routeConfig": [
+      {
+        "id": "root",
+        "path": "",
+        "file": "root.tsx",
+        "children": [
+          {
+            "file": "features/dashboard/pages/dashboard.tsx",
+            "index": true
+          },
+          {
+            "file": "features/survey/pages/all-survey.tsx",
+            "path": "/survey/all"
+          },
+          {
+            "file": "features/survey/pages/create-survey.tsx",
+            "path": "/surveys/create"
+          },
+          {
+            "file": "features/survey/pages/survey.tsx",
+            "path": "/surveys/:surveyId"
+          },
+          {
+            "file": "features/archive/pages/finished-survey.tsx",
+            "path": "/archive/finish"
+          },
+          {
+            "file": "features/profile/pages/my-survey.tsx",
+            "path": "/profile/survey"
+          },
+          {
+            "file": "features/profile/pages/my-response.tsx",
+            "path": "/profile/response"
+          }
+        ]
+      }
+    ]
+  },
+  "viteConfig": {
+    "build": {
+      "assetsDir": "assets"
+    }
+  }
+}
