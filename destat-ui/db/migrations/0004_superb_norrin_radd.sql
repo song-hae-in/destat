@@ -1,0 +1,2 @@
+ALTER TABLE "daily_visitor" ADD PRIMARY KEY ("id");--> statement-breakpoint
+ALTER TABLE "daily_visitor" ADD CONSTRAINT "daily_visitor_day_start_unique" UNIQUE("day_start");

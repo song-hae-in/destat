@@ -1,0 +1,1 @@
+ALTER TABLE "survey" ADD COLUMN "view" integer DEFAULT 0 NOT NULL;

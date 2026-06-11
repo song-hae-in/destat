@@ -10,6 +10,7 @@ import {
 import { Link } from "react-router";
 import { Button } from "./ui/button";
 import { rabbykit } from "~/root";
+import WalletButton from "./wallet-button";
 
 export default function Navigation() {
   return (
@@ -145,13 +146,7 @@ export default function Navigation() {
             </NavigationMenuItem>
           </NavigationMenuList>
         </NavigationMenu>
-        <Button
-          onClick={() => {
-            rabbykit.open();
-          }}
-        >
-          Connect
-        </Button>
+        <WalletButton />
       </div>
     </nav>
   );

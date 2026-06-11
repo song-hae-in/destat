@@ -14,12 +14,17 @@ import { createModal } from "@rabby-wallet/rabbykit";
 import { createConfig, http } from "@wagmi/core";
 import { hardhat } from "@wagmi/core/chains";
 
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { WagmiProvider } from "wagmi";
+
 export const config = createConfig({
   chains: [hardhat],
   transports: {
     [hardhat.id]: http(),
   },
 });
+
+const queryClient = new QueryClient();
 
 export const rabbykit = createModal({
   wagmi: config,
@@ -46,8 +51,12 @@ export function Layout({ children }: { children: React.ReactNode }) {
 export default function App() {
   return (
     <div className="justify-center items-center py-20 px-20 h-screen">
-      <Navigation />
-      <Outlet />
+      <WagmiProvider config={config}>
+        <QueryClientProvider client={queryClient}>
+          <Navigation />
+          <Outlet />
+        </QueryClientProvider>
+      </WagmiProvider>
     </div>
   );
 }
