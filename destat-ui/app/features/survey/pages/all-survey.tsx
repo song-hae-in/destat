@@ -8,7 +8,7 @@ import {
 } from "../utils/survey-grid";
 import { useEffect, useMemo, useState } from "react";
 import { createPublicClient, getContract, http } from "viem";
-import { hardhat } from "viem/chains";
+import { kairos, kairosRpcUrl } from "~/lib/chain";
 import type { Route } from "./+types/all-survey";
 import { supabase } from "~/postgres/supaclient";
 
@@ -48,8 +48,8 @@ export default function AllSurvey({ loaderData }: Route.ComponentProps) {
   );
   const onChainLoader = async () => {
     const client = createPublicClient({
-      chain: hardhat,
-      transport: http(),
+      chain: kairos,
+      transport: http(kairosRpcUrl),
     });
     const surveyFactoryContract = getContract({
       address: SURVEY_FACTORY,

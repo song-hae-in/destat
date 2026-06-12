@@ -12,15 +12,17 @@ import "./app.css";
 import Navigation from "./components/navigation";
 import { createModal } from "@rabby-wallet/rabbykit";
 import { createConfig, http } from "@wagmi/core";
-import { hardhat } from "@wagmi/core/chains";
+import { injected } from "wagmi/connectors";
+import { kairos, kairosRpcUrl } from "~/lib/chain";
 
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { WagmiProvider } from "wagmi";
 
 export const config = createConfig({
-  chains: [hardhat],
+  chains: [kairos],
+  connectors: [injected()],
   transports: {
-    [hardhat.id]: http(),
+    [kairos.id]: http(kairosRpcUrl),
   },
 });
 
