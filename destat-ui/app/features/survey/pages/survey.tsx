@@ -1,5 +1,5 @@
-import { SendIcon, User2Icon } from "lucide-react";
-import { Form, useFetcher } from "react-router";
+import { SendIcon } from "lucide-react";
+import { Form, useFetcher, useRevalidator } from "react-router";
 import { Button } from "~/components/ui/button";
 import {
   Card,
@@ -15,13 +15,58 @@ import type { Route } from "./+types/survey";
 import { SURVEY_ABI } from "../constant";
 import {
   useAccount,
-  useReadContract,
+  // useReadContract,
   useWaitForTransactionReceipt,
   useWriteContract,
 } from "wagmi";
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { getAddress } from "viem";
 import { supabase } from "~/postgres/supaclient";
+
+interface Question {
+  question: string;
+  options: string[];
+}
+
+export const loader = async ({ params }: Route.LoaderArgs) => {
+  let surveyId: string;
+  try {
+    surveyId = getAddress(params.surveyId as `0x${string}`);
+  } catch {
+    throw new Response("Invalid survey id", { status: 400 });
+  }
+
+  const { data: survey, error } = await supabase
+    .from("survey")
+    .select("title, description, question, target_number")
+    .eq("id", surveyId)
+    .single();
+
+  if (error || !survey) {
+    throw new Response("Survey not found", { status: 404 });
+  }
+
+  const { data: answerRows, error: answersError } = await supabase
+    .from("answer")
+    .select("answer")
+    .eq("survey_id", surveyId);
+
+  if (answersError) {
+    console.error("Answer fetch failed:", answersError);
+  }
+
+  const answers = (answerRows ?? [])
+    .map((row) => row.answer)
+    .filter((value): value is number[] => Array.isArray(value));
+
+  return {
+    title: survey.title,
+    description: survey.description,
+    questions: survey.question as unknown as Question[],
+    targetNumber: survey.target_number,
+    answers,
+  };
+};
 
 export const action = async ({ request }: Route.ActionArgs) => {
   const formData = await request.formData();
@@ -93,87 +138,86 @@ export const action = async ({ request }: Route.ActionArgs) => {
   return { ok: true };
 };
 
-interface Question {
-  question: string;
-  options: string[];
+function countAnswers(
+  questions: Question[],
+  answers: number[][],
+  target: number,
+): number[][] {
+  if (target <= 0) return [];
+
+  return questions.map((q, i) => {
+    const count = new Array(q.options.length).fill(0) as number[];
+    for (const answer of answers) {
+      const choice = answer[i];
+      if (typeof choice === "number" && choice >= 0 && choice < count.length) {
+        count[choice]++;
+      }
+    }
+    return count.map((n) => (n / target) * 100);
+  });
 }
 
-const questions: Question[] = [
-  {
-    question: "프랑스의 수도는 어디인가요?",
-    options: ["파리", "런던", "베를린", "마드리드"],
-  },
-  {
-    question: "웹 브라우저에서 실행되는 언어는 무엇인가요?",
-    options: ["파이썬", "자바", "C", "자바스크립트"],
-  },
-  {
-    question: "HTML의 약자는 무엇인가요?",
-    options: [
-      "하이퍼 트레이너 마킹 언어",
-      "하이퍼 텍스트 마크업 언어",
-      "하이퍼 텍스트 마케팅 언어",
-      "하이퍼 텍스트 마크업 레벨러",
-    ],
-  },
-  {
-    question: "React를 개발한 회사는 어디인가요?",
-    options: ["구글", "페이스북", "마이크로소프트", "아마존"],
-  },
-  {
-    question: "2 + 2의 값은 무엇인가요?",
-    options: ["3", "4", "5", "6"],
-  },
-  {
-    question: "다음 중 자바스크립트 프레임워크(또는 라이브러리)는 무엇인가요?",
-    options: ["Django", "Laravel", "React", "Spring"],
-  },
-  {
-    question: "CSS의 약자는 무엇인가요?",
-    options: [
-      "컴퓨터 스타일 시트",
-      "크리에이티브 스타일 시트",
-      "캐스케이딩 스타일 시트",
-      "컬러풀 스타일 시트",
-    ],
-  },
-  {
-    question: "다음 중 데이터베이스는 무엇인가요?",
-    options: ["MySQL", "React", "Node.js", "HTML"],
-  },
-  {
-    question: "TypeScript 파일의 확장자는 무엇인가요?",
-    options: [".ts", ".js", ".py", ".java"],
-  },
-  {
-    question: "보안 웹 통신에 사용되는 프로토콜은 무엇인가요?",
-    options: ["HTTP", "FTP", "HTTPS", "SMTP"],
-  },
-];
+export default function Survey({ loaderData, params }: Route.ComponentProps) {
+  const { title, description, questions, targetNumber, answers } = loaderData;
+  // const surveyAddress = params.surveyId as `0x${string}`;
+  //
+  // // on-chain read (local Hardhat / deployed chain required)
+  // const { data: title } = useReadContract({
+  //   address: surveyAddress,
+  //   abi: SURVEY_ABI,
+  //   functionName: "title",
+  // });
+  // const { data: description } = useReadContract({
+  //   address: surveyAddress,
+  //   abi: SURVEY_ABI,
+  //   functionName: "description",
+  // });
+  // const { data: questions } = useReadContract({
+  //   address: surveyAddress,
+  //   abi: SURVEY_ABI,
+  //   functionName: "getQuestions",
+  //   args: [],
+  // });
+  // const { data: answers } = useReadContract({
+  //   address: params.surveyId as `0x${string}`,
+  //   abi: SURVEY_ABI,
+  //   functionName: "getAnswers",
+  //   args: [],
+  // });
+  // const { data: target } = useReadContract({
+  //   address: params.surveyId as `0x${string}`,
+  //   abi: SURVEY_ABI,
+  //   functionName: "targetNumber",
+  //   args: [],
+  // });
+  //
+  // const countAnswersOnChain = () => {
+  //   if (!target) return;
+  //   return questions?.map((q, i) => {
+  //     const count = new Array(q.options.length).fill(0) as number[];
+  //     answers?.map((answer) => count[answer.answers[i]]++);
+  //     return count.map((n) => (n / Number(target)) * 100);
+  //   });
+  // };
+  //
+  // useEffect(() => {
+  //   if (!answers || !questions || !address) {
+  //     return;
+  //   }
+  //   for (const answer of answers) {
+  //     if (answer.respondent === address) {
+  //       setCounts(countAnswersOnChain() || []);
+  //       setIsAnswered(true);
+  //       return;
+  //     }
+  //   }
+  // }, [answers, questions, address, target]);
 
-export default function Survey({ params }: Route.ComponentProps) {
-  const surveyAddress = params.surveyId as `0x${string}`;
-
-  const { data: title } = useReadContract({
-    address: surveyAddress,
-    abi: SURVEY_ABI,
-    functionName: "title",
-  });
-  const { data: description } = useReadContract({
-    address: surveyAddress,
-    abi: SURVEY_ABI,
-    functionName: "description",
-  });
-  const { data: questions } = useReadContract({
-    address: surveyAddress,
-    abi: SURVEY_ABI,
-    functionName: "getQuestions",
-    args: [],
-  });
   const { writeContract, data: hash } = useWriteContract();
   const { isFetched, data: receipt } = useWaitForTransactionReceipt({ hash });
   const { address } = useAccount();
   const fetcher = useFetcher<{ ok?: boolean; error?: string }>();
+  const revalidator = useRevalidator();
   const pendingAnswersRef = useRef<number[] | null>(null);
   const syncedTxRef = useRef<string | null>(null);
 
@@ -218,58 +262,44 @@ export default function Survey({ params }: Route.ComponentProps) {
     });
   }, [receipt, isFetched, params.surveyId]);
 
-  const { data: answers } = useReadContract({
-    address: params.surveyId as `0x${string}`,
-    abi: SURVEY_ABI,
-    functionName: "getAnswers",
-    args: [],
-  });
-  const { data: target } = useReadContract({
-    address: params.surveyId as `0x${string}`,
-    abi: SURVEY_ABI,
-    functionName: "targetNumber",
-    args: [],
-  });
-  const [counts, setCounts] = useState<number[][]>([]);
   const [isAnswered, setIsAnswered] = useState(false);
-  const countAnswers = () => {
-    //0:[0,0,1]
-    //1:[0,0,1]
-    if (!target) return;
-    return questions?.map((q, i) => {
-      const count = new Array(q.options.length).fill(0) as number[];
-      answers?.map((answer) => count[answer.answers[i]]++);
-      return count.map((n) => (n / Number(target)) * 100);
-    });
-  };
+  const counts = useMemo(
+    () => countAnswers(questions, answers, targetNumber),
+    [questions, answers, targetNumber],
+  );
+
   useEffect(() => {
-    if (!answers || !questions || !address) {
-      return;
+    if (!address) return;
+    const key = `destat-answered:${params.surveyId}:${address}`;
+    if (sessionStorage.getItem(key)) {
+      setIsAnswered(true);
     }
-    for (const answer of answers) {
-      if (answer.respondent === address) {
-        setCounts(countAnswers() || []);
-        setIsAnswered(true);
-        return;
-      }
-    }
-  }, [answers, questions, address, target]);
+  }, [address, params.surveyId]);
+
+  useEffect(() => {
+    if (!fetcher.data?.ok || !address) return;
+    sessionStorage.setItem(
+      `destat-answered:${params.surveyId}:${address}`,
+      "1",
+    );
+    setIsAnswered(true);
+    revalidator.revalidate();
+  }, [fetcher.data?.ok, address, params.surveyId, revalidator]);
+
   return (
     <div className="grid grid-cols-3 w-screen gap-3 p-4">
       {" "}
       <Card className="col-span-2">
         <CardHeader>
-          <CardTitle className="font-extrabold text-3xl">
-            {title ?? "Loading..."}
-          </CardTitle>
-          <CardDescription>{description ?? ""}</CardDescription>
+          <CardTitle className="font-extrabold text-3xl">{title}</CardTitle>
+          <CardDescription>{description}</CardDescription>
         </CardHeader>
         {isAnswered ? (
           <CardContent className="overflow-y-auto h-[70vh] no-scrollbar">
             <h1 className="font-semibold text-xl mb-6">Survey Progress</h1>
 
             <div className="grid grid-cols-2 gap-8">
-              {questions?.map((q, index) => (
+              {questions.map((q, index) => (
                 <div key={index} className="flex flex-col gap-3">
                   <h1 className="font-medium">{q.question}</h1>
                   <div className="flex flex-col gap-2">
@@ -303,8 +333,8 @@ export default function Survey({ params }: Route.ComponentProps) {
               onSubmit={submitAnswer}
               className="grid grid-cols-2"
             >
-              {questions?.map((q, index) => (
-                <div className="flex flex-col gap-3">
+              {questions.map((q, index) => (
+                <div key={index} className="flex flex-col gap-3">
                   <span className="mt-5 mb-1">{q.question}</span>
                   <div className="flex flex-col gap-2">
                     {q.options.map((o, i) => (
@@ -335,7 +365,7 @@ export default function Survey({ params }: Route.ComponentProps) {
       <Card className="col-span-1">
         <CardHeader>
           <CardTitle>Chat View</CardTitle>
-          <CardDescription>{description ?? ""}</CardDescription>
+          <CardDescription>{description}</CardDescription>
         </CardHeader>
 
         <CardContent className="flex flex-col gap-5 overflow-y-auto h-[70vh] no-scrollbar">
